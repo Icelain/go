@@ -78,6 +78,9 @@ func ParseGOEXPERIMENT(goos, goarch, goexp string) (*ExperimentFlags, error) {
 	// things like .debug_addr (needed for DWARF 5).
 	dwarf5Supported := (goos != "darwin" && goos != "ios" && goos != "aix")
 
+	// Fork default: enable the experimental arena allocator (GOEXPERIMENT=arenas)
+	// so the arena standard library package is visible without an explicit env flag.
+	// Disable with GOEXPERIMENT=noarenas if needed. See golang/go#51317.
 	baseline := goexperiment.Flags{
 		RegabiWrappers:        regabiSupported,
 		RegabiArgs:            regabiSupported,
@@ -86,6 +89,7 @@ func ParseGOEXPERIMENT(goos, goarch, goexp string) (*ExperimentFlags, error) {
 		GreenTeaGC:            true,
 		JSONv2:                true,
 		SizeSpecializedMalloc: true,
+		Arenas:                true,
 	}
 	flags := &ExperimentFlags{
 		Flags:    baseline,
